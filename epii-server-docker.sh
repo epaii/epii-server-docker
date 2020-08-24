@@ -69,6 +69,7 @@ function help(){
     echo "sudo  epii-server-docker restart"
     echo "sudo  epii-server-docker uninstall"
     echo "sudo  epii-server-docker info"
+    echo "sudo  epii-server-docker download"
 
     
 }
