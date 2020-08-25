@@ -1,6 +1,6 @@
 #! /bin/bash
 
-version=0.0.1
+version=0.0.2
 
 function download(){
    docker pull epii/epii-server:${version}
