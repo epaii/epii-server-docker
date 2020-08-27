@@ -62,6 +62,10 @@ function info(){
     cat   $curPath/.info
 }
 
+function gitinit(){
+     docker exec esc-${version} bash -c "sh /scripts/initgit.sh"
+}
+
 function help(){
     echo "sudo ./epii-server-docker install 80 /path/to/epii"
     echo "sudo  epii-server-docker stop"
@@ -70,6 +74,7 @@ function help(){
     echo "sudo  epii-server-docker uninstall"
     echo "sudo  epii-server-docker info"
     echo "sudo  epii-server-docker download"
+    echo "sudo  epii-server-docker gitinit"
 
     
 }
