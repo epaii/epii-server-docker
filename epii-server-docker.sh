@@ -1,6 +1,6 @@
 #! /bin/bash
 
-version=0.0.2
+version=0.0.3
 
 function download(){
    docker pull epii/epii-server:${version}
@@ -66,6 +66,15 @@ function gitinit(){
      docker exec esc-${version} bash -c "sh /scripts/initgit.sh"
 }
 
+function newsite(){
+    if [ $# != 1 ];then
+        echo " it is need 2 args";
+        exit
+    fi
+     docker exec esc-${version} bash -c " php /webs/git-auto-website/bind.php /epii/repos/$1.git /epii/webs/$1"
+    
+}
+
 function help(){
     echo "sudo ./epii-server-docker install 80 /path/to/epii"
     echo "sudo  epii-server-docker stop"
@@ -75,8 +84,7 @@ function help(){
     echo "sudo  epii-server-docker info"
     echo "sudo  epii-server-docker download"
     echo "sudo  epii-server-docker gitinit"
-
-    
+    echo "sudo  epii-server-docker newsite {sitename}"
 }
 
 if [ `id -u` != "0" ] ; then
