@@ -167,6 +167,7 @@ function help() {
     echo "sudo  epii-server-docker mysql start"
     echo "sudo  epii-server-docker mysql stop"
     echo "sudo  epii-server-docker mysql restart"
+    echo "sudo  epii-server-docker mysql info"
 }
 
 if [ $(id -u) != "0" ]; then
