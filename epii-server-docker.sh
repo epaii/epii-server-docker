@@ -127,6 +127,7 @@ function mysql_install() {
     docker pull mysql
     docker run -p $1:3306 --name esc-mysql -e MYSQL_ROOT_PASSWORD=$2 -v $3:/var/lib/mysql -d mysql
     docker exec esc-mysql bash -c "echo default-authentication-plugin=mysql_native_password >> /etc/mysql/my.cnf"
+    docker restart esc-mysql
     
 }
 function mysql_uninstall() {
