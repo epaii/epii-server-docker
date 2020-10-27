@@ -115,9 +115,7 @@ function mysql_tart(){
      
     docker start esc-mysql
 }
-function mysql_help(){
-
-}
+ 
 
 function help() {
     echo "sudo ./epii-server-docker install 80 /path/to/epii"
