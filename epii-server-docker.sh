@@ -142,6 +142,9 @@ fi
 
 command -v docker >/dev/null 2>&1 || {
     echo "docker is not installed.  Aborting."
+    echo "you can install docker follow this:"
+    echo "curl -fsSL https://get.docker.com -o get-docker.sh"
+    echo "sudo sh get-docker.sh"
     exit 1
 }
 
