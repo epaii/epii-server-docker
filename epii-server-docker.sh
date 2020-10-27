@@ -68,6 +68,9 @@ function start() {
 function stop() {
     docker exec esc-${version} bash -c "cd /epii-server ; sh ./stop.sh"
 }
+function bash() {
+    docker exec -it esc-${version} /bin/bash
+}
 function restart() {
     stop
     start
@@ -80,7 +83,7 @@ function info() {
 function git_init() {
     docker exec esc-${version} bash -c "sh /scripts/initgit.sh"
 }
- 
+
 function git_add() {
     if [ $# != 1 ]; then
         echo " it is need 2 args"
@@ -89,6 +92,7 @@ function git_add() {
     docker exec esc-${version} bash -c " php /webs/git-auto-website/bind.php /epii/repos/$1.git /epii/webs/$1"
 
 }
+
 function git() {
 
     if [ "$(type -t git_$1)" == function ]; then
@@ -101,7 +105,7 @@ function mysql() {
     if [ "$(type -t mysql_$1)" == function ]; then
         mysql_$1 ${@:2}
     else
-        mysql_info    
+        mysql_info
     fi
 
 }
@@ -128,7 +132,7 @@ function mysql_install() {
     docker run -p $1:3306 --name esc-mysql -e MYSQL_ROOT_PASSWORD=$2 -v $3:/var/lib/mysql -d mysql
     docker exec esc-mysql bash -c "echo default-authentication-plugin=mysql_native_password >> /etc/mysql/my.cnf"
     docker restart esc-mysql
-    
+
 }
 function mysql_uninstall() {
     docker stop esc-mysql
@@ -148,8 +152,12 @@ function mysql_tart() {
     docker start esc-mysql
 }
 
-function mysql_info(){
+function mysql_info() {
     docker inspect esc-mysql | grep IPAddress
+}
+
+function mysql_bash() {
+    docker exec -it esc-mysql /bin/bash
 }
 
 function help() {
@@ -160,6 +168,7 @@ function help() {
     echo "sudo  epii-server-docker uninstall"
     echo "sudo  epii-server-docker info"
     echo "sudo  epii-server-docker download"
+    echo "sudo  epii-server-docker bash"
     echo "sudo  epii-server-docker git init"
     echo "sudo  epii-server-docker git add  {sitename}"
     echo "sudo  epii-server-docker mysql install 3306 rootpassword /path/to/data"
@@ -168,6 +177,8 @@ function help() {
     echo "sudo  epii-server-docker mysql stop"
     echo "sudo  epii-server-docker mysql restart"
     echo "sudo  epii-server-docker mysql info"
+    echo "sudo  epii-server-docker mysql bash"
+
 }
 
 if [ $(id -u) != "0" ]; then
