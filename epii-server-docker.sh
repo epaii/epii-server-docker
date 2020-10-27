@@ -52,6 +52,7 @@ function install() {
     ln -s $(pwd)/epii-server-docker.sh /usr/local/bin/esd
     docker run --restart=always --name esc-${version} -p $1:80 -v $a_dir:/epii -itd epii-server:${version} /bin/bash
     start
+    docker exec esc-${version} bash -c "mkdir /epii/logs"
 }
 
 function uninstall() {
