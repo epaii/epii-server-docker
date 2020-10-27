@@ -100,6 +100,8 @@ function mysql() {
 
     if [ "$(type -t mysql_$1)" == function ]; then
         mysql_$1 ${@:2}
+    else
+        mysql_info    
     fi
 
 }
@@ -143,6 +145,10 @@ function mysql_restart() {
 function mysql_tart() {
 
     docker start esc-mysql
+}
+
+function mysql_info(){
+    docker inspect esc-mysql | grep IPAddress
 }
 
 function help() {
