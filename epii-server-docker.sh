@@ -1,6 +1,6 @@
 #! /bin/bash
 
-version=0.0.3
+version=latest
 
 function check_port() {
     echo "正在检测端口......"
