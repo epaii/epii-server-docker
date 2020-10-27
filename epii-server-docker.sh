@@ -21,6 +21,7 @@ function install() {
     fi
     if [ ! -d $2 ]; then
         mkdir -p $2
+        chmod -R 0777 $2
     fi
     a_dir=$(readlink -f $2)
     echo -e "port:"$1"\nroot:"$a_dir >$(pwd)/.info
@@ -94,6 +95,7 @@ function mysql_install(){
     fi
     if [ ! -d $3 ]; then
         mkdir -p $3
+        chmod -R 0777 $3
     fi
     docker pull mysql
     docker run -p $1:3306 --name esc-mysql -e MYSQL_ROOT_PASSWORD=$2 -v $3:/var/lib/mysql -d mysql
