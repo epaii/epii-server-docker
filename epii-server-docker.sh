@@ -2,6 +2,17 @@
 
 version=0.0.3
 
+function check_port() {
+    echo "正在检测端口......"
+    pIDa=$(/usr/sbin/lsof -i :$1 | grep -v "PID" | awk '{print $2}')
+
+    if [ "$pIDa" != "" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 function download() {
     docker pull epii/epii-server:${version}
     #version=latest
@@ -17,6 +28,10 @@ function install() {
 
     if ! [ "$1" -gt 0 ] 2>/dev/null; then
         echo " the first param must be a number"
+        exit
+    fi
+    if check_port $1; then
+        echo "port $1 is be used"
         exit
     fi
     if [ ! -d $2 ]; then
@@ -62,11 +77,11 @@ function info() {
     cat $curPath/.info
 }
 
-function gitinit() {
+function git_init() {
     docker exec esc-${version} bash -c "sh /scripts/initgit.sh"
 }
-
-function newsite() {
+ 
+function git_add() {
     if [ $# != 1 ]; then
         echo " it is need 2 args"
         exit
@@ -74,16 +89,22 @@ function newsite() {
     docker exec esc-${version} bash -c " php /webs/git-auto-website/bind.php /epii/repos/$1.git /epii/webs/$1"
 
 }
+function git() {
 
+    if [ "$(type -t git_$1)" == function ]; then
+        git_$1 ${@:2}
+    fi
+
+}
 function mysql() {
- 
+
     if [ "$(type -t mysql_$1)" == function ]; then
         mysql_$1 ${@:2}
     fi
 
-   
 }
-function mysql_install(){
+
+function mysql_install() {
     if [ $# != 3 ]; then
         echo " it is need 3 args"
         exit
@@ -93,6 +114,10 @@ function mysql_install(){
         echo " the first param must be a number"
         exit
     fi
+    if check_port $1; then
+        echo "port $1 is be used"
+        exit
+    fi
     if [ ! -d $3 ]; then
         mkdir -p $3
         chmod -R 0777 $3
@@ -100,24 +125,23 @@ function mysql_install(){
     docker pull mysql
     docker run -p $1:3306 --name esc-mysql -e MYSQL_ROOT_PASSWORD=$2 -v $3:/var/lib/mysql -d mysql
 }
-function mysql_uninstall(){
+function mysql_uninstall() {
     docker stop esc-mysql
     docker rm -f esc-mysql
     docker image rm -f mysql
 }
-function mysql_stop(){
-     
+function mysql_stop() {
+
     docker stop esc-mysql
 }
-function mysql_restart(){
-     
+function mysql_restart() {
+
     docker restart esc-mysql
 }
-function mysql_tart(){
-     
+function mysql_tart() {
+
     docker start esc-mysql
 }
- 
 
 function help() {
     echo "sudo ./epii-server-docker install 80 /path/to/epii"
@@ -127,8 +151,8 @@ function help() {
     echo "sudo  epii-server-docker uninstall"
     echo "sudo  epii-server-docker info"
     echo "sudo  epii-server-docker download"
-    echo "sudo  epii-server-docker gitinit"
-    echo "sudo  epii-server-docker newsite {sitename}"
+    echo "sudo  epii-server-docker git init"
+    echo "sudo  epii-server-docker git add  {sitename}"
     echo "sudo  epii-server-docker mysql install 3306 rootpassword /path/to/data"
     echo "sudo  epii-server-docker mysql uninstall"
     echo "sudo  epii-server-docker mysql start"
