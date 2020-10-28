@@ -64,6 +64,7 @@ function uninstall() {
     docker image rm -f epii-server:$version
     docker image rm -f epii/epii-server:$version
     rm -rf /usr/local/bin/epii-server-docker
+    rm -rf /usr/local/bin/esd
 }
 function start() {
 
