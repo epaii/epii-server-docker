@@ -34,6 +34,8 @@ function install() {
         echo "port $1 is be used"
         exit
     fi
+
+    
     if [ ! -d $2 ]; then
         mkdir -p $2
         chmod -R 0777 $2
@@ -42,6 +44,7 @@ function install() {
         mkdir -p $2/logs
         chmod -R 0777 $2/logs
     fi
+    docker network create --driver bridge --subnet=172.18.12.0/16 --gateway=172.18.1.1 epii-net
     a_dir=$(readlink -f $2)
     echo -e "port:"$1"\nroot:"$a_dir >$(pwd)/.info
 
@@ -54,7 +57,7 @@ function install() {
     docker tag epii/epii-server:${version} epii-server:${version}
     ln -s $(pwd)/epii-server-docker.sh /usr/local/bin/epii-server-docker
     ln -s $(pwd)/epii-server-docker.sh /usr/local/bin/esd
-    docker run --restart=always --name esc-${version} -p $1:80 -v $a_dir:/epii -itd epii-server:${version} /bin/bash -c "cd /epii-server ; sh ./start.sh;/bin/bash"
+    docker run --restart=always --network=epii-net --ip 172.18.12.99 --name esc-${version} -p $1:80 -v $a_dir:/epii -itd epii-server:${version} /bin/bash -c "cd /epii-server ; sh ./start.sh;/bin/bash"
     #start
     #docker exec esc-${version} bash -c "mkdir /epii/logs"
 }
@@ -136,7 +139,7 @@ function mysql_install() {
         chmod -R 0777 $3
     fi
     docker pull mysql
-    docker run --restart=always -p $1:3306 --name esc-mysql --network=bridge --ip 172.17.0.100 -e MYSQL_ROOT_PASSWORD=$2 -v $3:/var/lib/mysql -d mysql
+    docker run --restart=always -p $1:3306 --name esc-mysql --network=epii-net --ip 172.18.12.100 -e MYSQL_ROOT_PASSWORD=$2 -v $3:/var/lib/mysql -d mysql
     docker exec esc-mysql bash -c "echo default-authentication-plugin=mysql_native_password >> /etc/mysql/my.cnf"
     docker restart esc-mysql
 
