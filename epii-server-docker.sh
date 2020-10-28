@@ -136,7 +136,7 @@ function mysql_install() {
         chmod -R 0777 $3
     fi
     docker pull mysql
-    docker run --restart=always -p $1:3306 --name esc-mysql -e MYSQL_ROOT_PASSWORD=$2 -v $3:/var/lib/mysql -d mysql
+    docker run --restart=always -p $1:3306 --name esc-mysql --network=bridge --ip 172.17.0.100 -e MYSQL_ROOT_PASSWORD=$2 -v $3:/var/lib/mysql -d mysql
     docker exec esc-mysql bash -c "echo default-authentication-plugin=mysql_native_password >> /etc/mysql/my.cnf"
     docker restart esc-mysql
 
