@@ -4,7 +4,7 @@ version=latest
 
 function check_port() {
     echo "正在检测端口......"
-    pIDa=$(/usr/sbin/lsof -i :$1 | grep -v "PID" | awk '{print $2}')
+    pIDa=$(lsof -i :$1 | grep -v "PID" | awk '{print $2}')
 
     if [ "$pIDa" != "" ]; then
         return 0
