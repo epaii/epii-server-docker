@@ -147,7 +147,12 @@ function mysql_install() {
         mkdir -p $data_dir
         chmod -R 0777 $data_dir
     fi
-    docker pull mysql
+    file="./mysql.tar"
+    if [ -f "$file" ]; then
+        docker load <$file
+    else
+         docker pull mysql
+    fi
     docker run --restart=always -p $1:3306 --name esc-mysql -e MYSQL_ROOT_PASSWORD=$2  --network=epii-net --ip 172.18.12.100  -v $data_dir:/var/lib/mysql -d mysql --default-authentication-plugin=mysql_native_password
     sleep 10
     docker exec -it esc-mysql  mysql -e"USE mysql -uroot -p$2;alter user 'root'@'localhost'IDENTIFIED BY '$2';CREATE USER 'root'@'172.18.%' IDENTIFIED BY '$2';GRANT all ON *.* TO 'root'@'172.18.%';FLUSH PRIVILEGES;"
@@ -181,6 +186,10 @@ function mysql_bash() {
 }
 function mysql_manager() {
      docker exec -it esc-mysql mysql -uroot -p
+}
+function mysql_download() {
+    docker pull mysql
+    docker save mysql >$(pwd)/mysql.tar
 }
 function help() {
     echo "sudo ./epii-server-docker install 80 443 /path/to/epii"
