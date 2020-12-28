@@ -210,7 +210,7 @@ function help() {
     echo "sudo  epii-server-docker mysql info"
     echo "sudo  epii-server-docker mysql bash"
     echo "sudo  epii-server-docker mysql manager"
-
+    echo "sudo  epii-server-docker mysql download"
 }
 
 if [ $(id -u) != "0" ]; then
