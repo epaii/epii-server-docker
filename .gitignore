@@ -1,3 +1,5 @@
 .info
 test
 epii-server-docker-*
+.DS_Store
+test-mysql-data
