@@ -21,8 +21,8 @@ function download() {
 
 function install() {
 
-    if [ $# != 2 ]; then
-        echo " it is need 2 args"
+    if [ $# != 3 ]; then
+        echo " it is need 3 args"
         exit
     fi
 
@@ -34,19 +34,27 @@ function install() {
         echo "port $1 is be used"
         exit
     fi
-
-    
-    if [ ! -d $2 ]; then
-        mkdir -p $2
-        chmod -R 0777 $2
+    if ! [ "$2" -gt 0 ] 2>/dev/null; then
+        echo " the second param must be a number"
+        exit
     fi
-    if [ ! -d $2/logs ]; then
-        mkdir -p $2/logs
-        chmod -R 0777 $2/logs
+    if check_port $2; then
+        echo "port $2 is be used"
+        exit
+    fi
+    
+    if [ ! -d $3 ]; then
+        mkdir -p $3
+        chmod -R 0777 $3
+    fi
+    if [ ! -d $3/logs ]; then
+        mkdir -p $3/logs
+        chmod -R 0777 $3/logs
     fi
     docker network create --driver bridge --subnet=172.18.12.0/16 --gateway=172.18.1.1 epii-net
-    a_dir=$(readlink -f $2)
-    echo -e "port:"$1"\nroot:"$a_dir >$(pwd)/.info
+    a_dir=$(cd $3;pwd)
+     
+    echo -e "port:"$1","$2"\nroot:"$a_dir >$(pwd)/.info
 
     file="./epii-server-docker-${version}.tar"
     if [ -f "$file" ]; then
@@ -57,7 +65,7 @@ function install() {
     docker tag epii/epii-server:${version} epii-server:${version}
     ln -s $(pwd)/epii-server-docker.sh /usr/local/bin/epii-server-docker
     ln -s $(pwd)/epii-server-docker.sh /usr/local/bin/esd
-    docker run --restart=always --network=epii-net --ip 172.18.12.99 --name esc-${version} -p $1:80 -v $a_dir:/epii -itd epii-server:${version} /bin/bash -c "cd /epii-server ; sh ./start.sh;/bin/bash"
+    docker run --restart=always --network=epii-net --ip 172.18.12.99 --name esc-${version} -p $1:80 -p $2:443 -v $a_dir:/epii -itd epii-server:${version} /bin/bash -c "cd /epii-server ; sh ./start.sh;/bin/bash"
     #start
     #docker exec esc-${version} bash -c "mkdir /epii/logs"
 }
@@ -66,13 +74,12 @@ function uninstall() {
     docker container rm -f esc-$version
     docker image rm -f epii-server:$version
     docker image rm -f epii/epii-server:$version
+    docker network rm epii-net
     rm -rf /usr/local/bin/epii-server-docker
     rm -rf /usr/local/bin/esd
 }
 function start() {
-
     docker container ls | grep esc-${version} >/dev/null 2>&1 || { docker container start esc-${version}; }
-
     docker exec esc-${version} bash -c "cd /epii-server ; sh ./start.sh"
 }
 function stop() {
@@ -141,6 +148,7 @@ function mysql_install() {
     docker pull mysql
     docker run --restart=always -p $1:3306 --name esc-mysql --network=epii-net --ip 172.18.12.100 -e MYSQL_ROOT_PASSWORD=$2 -v $3:/var/lib/mysql -d mysql
     docker exec esc-mysql bash -c "echo default-authentication-plugin=mysql_native_password >> /etc/mysql/my.cnf"
+    # docker exec esc-mysql bash -c "mysql -uroot -p$2 -e''" 
     docker restart esc-mysql
 
 }
@@ -171,7 +179,7 @@ function mysql_bash() {
 }
 
 function help() {
-    echo "sudo ./epii-server-docker install 80 /path/to/epii"
+    echo "sudo ./epii-server-docker install 80 443 /path/to/epii"
     echo "sudo  epii-server-docker stop"
     echo "sudo  epii-server-docker start"
     echo "sudo  epii-server-docker restart"
