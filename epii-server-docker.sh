@@ -159,7 +159,9 @@ function git() {
 function app() {
     docker exec esc-${version} bash -c "epii-server app $*"
 }
-
+function pull() {
+    docker exec esc-${version} bash -c "git -C /epii-server pull "
+}
 function mysql() {
 
     if [ "$(type -t mysql_$1)" == function ]; then
