@@ -92,7 +92,7 @@ function install() {
         ln -s $(pwd)/epii-server-docker.sh /usr/local/bin/esd
     fi
 
-    docker run --restart=always --network=epii-net --ip 172.18.12.99 --name esc-${version} -p $1:80 -p $2:443 -v $a_dir:/epii -itd epii-server:${version} /bin/bash -c "cd /epii-server ; sh ./start.sh;/bin/bash"
+    docker run --restart=always --network=epii-net --ip 172.18.12.99 --name esc-${version} -p $1:80 -p $2:443 -v $a_dir:/epii -itd epii-server:${version} /bin/bash -c "cd /epii-server ; /bin/bash ./start.sh;/bin/bash"
     #start
     #docker exec esc-${version} bash -c "mkdir /epii/logs"
 }
@@ -118,10 +118,10 @@ function remove() {
 
 function start() {
     docker container ls | grep esc-${version} >/dev/null 2>&1 || { docker container start esc-${version}; }
-    docker exec esc-${version} bash -c "cd /epii-server ; sh ./start.sh"
+    docker exec esc-${version} bash -c "cd /epii-server ; /bin/bash ./start.sh"
 }
 function stop() {
-    docker exec esc-${version} bash -c "cd /epii-server ; sh ./stop.sh"
+    docker exec esc-${version} bash -c "cd /epii-server ; /bin/bash ./stop.sh"
 }
 function bash() {
     docker exec -it esc-${version} /bin/bash
@@ -276,7 +276,7 @@ command -v docker >/dev/null 2>&1 || {
     echo "docker is not installed.  Aborting."
     echo "you can install docker follow this:"
     echo "curl -fsSL https://get.docker.com -o get-docker.sh"
-    echo "sudo sh get-docker.sh"
+    echo "sudo /bin/bash get-docker.sh"
     exit 1
 }
 
