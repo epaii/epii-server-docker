@@ -239,11 +239,16 @@ function mysql_download() {
     docker save mysql >$(pwd)/mysql.tar
 }
 function help() {
+     
     echo "sudo ./epii-server-docker.sh install 80 443 /path/to/epii"
+    echo "sudo  epii-server-docker pull"
     echo "sudo  epii-server-docker stop"
     echo "sudo  epii-server-docker start"
     echo "sudo  epii-server-docker restart"
     echo "sudo  epii-server-docker app list"
+    echo "sudo  epii-server-docker app stop"
+    echo "sudo  epii-server-docker app start"
+    echo "sudo  epii-server-docker app restart"
     echo "sudo  epii-server-docker uninstall"
     echo "sudo  epii-server-docker info"
     echo "sudo  epii-server-docker download"
