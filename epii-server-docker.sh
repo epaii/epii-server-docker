@@ -138,6 +138,7 @@ function info() {
 
 function git_init() {
     docker exec esc-${version} bash -c "sh /scripts/initgit.sh"
+    docker exec esc-${version} bash -c "if [ !-d '/epii/hooks' ]; then mkdir /epii/hooks; fi && echo '#!/bin/sh' > /epii/hooks/git.sh"
 }
 
 function git_add() {
