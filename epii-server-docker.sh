@@ -93,6 +93,7 @@ function install() {
     fi
 
     docker run --restart=always --network=epii-net --ip 172.18.12.99 --name esc-${version} -p $1:80 -p $2:443 -v $a_dir:/epii -itd epii-server:${version} /bin/bash -c "cd /epii-server ; /bin/bash ./start.sh;/bin/bash"
+    pull
     #start
     #docker exec esc-${version} bash -c "mkdir /epii/logs"
 }
@@ -118,10 +119,10 @@ function remove() {
 
 function start() {
     docker container ls | grep esc-${version} >/dev/null 2>&1 || { docker container start esc-${version}; }
-    docker exec esc-${version} bash -c "cd /epii-server ; /bin/bash ./start.sh"
+    docker exec esc-${version} bash -c 'cd /epii-server ; /bin/bash ./start.sh'
 }
 function stop() {
-    docker exec esc-${version} bash -c "cd /epii-server ; /bin/bash ./stop.sh"
+    docker exec esc-${version} bash -c 'cd /epii-server ; /bin/bash ./stop.sh'
 }
 function bash() {
     docker exec -it esc-${version} /bin/bash
@@ -161,6 +162,7 @@ function app() {
 }
 function pull() {
     docker exec esc-${version} bash -c "git -C /epii-server pull "
+    docker exec esc-${version} bash -c "git -C /webs/git-auto-website pull "
 }
 function mysql() {
 
