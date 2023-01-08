@@ -171,6 +171,7 @@ function app() {
     docker exec esc-${version} bash -c "epii-server app $*"
 }
 function pull() {
+    echo "start pull epii-server"
     docker exec esc-${version} bash -c "git -C /epii-server pull "
     docker exec esc-${version} bash -c "git -C /webs/git-auto-website pull "
 }
