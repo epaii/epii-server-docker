@@ -6,7 +6,7 @@ if [[ $0 =~ ^\/.* ]]    #判断当前脚本是否为绝对路径，匹配以/开
 then
   script=$0
 else
-  script=$epiiDockerRooDir/$0
+  script=$(pwd)/$0
 fi
 
  
@@ -16,18 +16,15 @@ if [ "$(uname)" == "Darwin" ]; then
 else
     curFile=$(readlink -f $script)
 fi
-
-  
+ 
 if [ "$curFile" = "" ];then
     epiiDockerRooDir=${script%/*}
 else
     epiiDockerRooDir=$(dirname $curFile)
 fi
 
- 
-
+  
 config_file=$epiiDockerRooDir/config.sh
-
  
 
 if [ -f "$config_file" ]; then
