@@ -103,7 +103,8 @@ function install() {
 
     docker run --restart=always --network=epii-net --ip 172.18.12.99 --name esc-${version} -p $1:80 -p $2:443 -v $a_dir:/epii -itd epii-server:${version} /bin/bash -c "cd /epii-server ; /bin/bash ./start.sh;/bin/bash"
     pull
-    #start
+    stop
+    start
     #docker exec esc-${version} bash -c "mkdir /epii/logs"
 }
 
