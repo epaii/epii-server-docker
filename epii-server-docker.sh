@@ -2,19 +2,31 @@
 
 version=latest
 
+if [[ $0 =~ ^\/.* ]]    #判断当前脚本是否为绝对路径，匹配以/开头下的所有
+then
+  script=$0
+else
+  script=$epiiDockerRooDir/$0
+fi
+
+ 
+
 if [ "$(uname)" == "Darwin" ]; then
-    curFile=$(readlink -n "$0")
+    curFile=$(readlink -n $script)
 else
-    curFile=$(readlink -f "$0")
+    curFile=$(readlink -f $script)
 fi
+
+  
 if [ "$curFile" = "" ];then
-    curPath="."
+    epiiDockerRooDir=${script%/*}
 else
-    curPath=$(dirname $curFile)
+    epiiDockerRooDir=$(dirname $curFile)
 fi
 
+ 
 
-config_file=$curPath/config.sh
+config_file=$epiiDockerRooDir/config.sh
 
  
 
@@ -35,7 +47,7 @@ function check_port() {
 function download() {
     docker pull epii/epii-server:${version}
     #version=latest
-    docker save epii/epii-server >$(pwd)/epii-server-docker-${version}.tar
+    docker save epii/epii-server >$epiiDockerRooDir/epii-server-docker-${version}.tar
 }
 
 function install() {
@@ -78,7 +90,7 @@ function install() {
         pwd
     )
 
-    echo -e "port:"$1","$2"\nroot:"$a_dir >$(pwd)/.info
+    echo -e "port:"$1","$2"\nroot:"$a_dir >$epiiDockerRooDir/.info
 
     file="./epii-server-docker-${version}.tar"
     if [ -f "$file" ]; then
@@ -88,8 +100,8 @@ function install() {
     fi
     docker tag epii/epii-server:${version} epii-server:${version}
     if [ ! -e "/usr/local/bin/epii-server-docker" ]; then
-        ln -s $(pwd)/epii-server-docker.sh /usr/local/bin/epii-server-docker
-        ln -s $(pwd)/epii-server-docker.sh /usr/local/bin/esd
+        ln -s $epiiDockerRooDir/epii-server-docker.sh /usr/local/bin/epii-server-docker
+        ln -s $epiiDockerRooDir/epii-server-docker.sh /usr/local/bin/esd
     fi
 
     docker run --restart=always --network=epii-net --ip 172.18.12.99 --name esc-${version} -p $1:80 -p $2:443 -v $a_dir:/epii -itd epii-server:${version} /bin/bash -c "cd /epii-server ; /bin/bash ./start.sh;/bin/bash"
@@ -133,7 +145,7 @@ function restart() {
 }
 function info() {
 
-    cat $curPath/.info
+    cat $epiiDockerRooDir/.info
 }
 
 function git_init() {
@@ -206,6 +218,7 @@ function mysql_install() {
     fi
     docker run --restart=always -p $1:3306 --name esc-mysql -e MYSQL_ROOT_PASSWORD=$2 --network=epii-net --ip 172.18.12.100 -v $data_dir:/var/lib/mysql -d mysql --default-authentication-plugin=mysql_native_password
     sleep 20
+    echo "run mysql contianer success"
     docker exec -it esc-mysql mysql -e"USE mysql -uroot -p$2;alter user 'root'@'localhost'IDENTIFIED BY '$2';CREATE USER 'root'@'172.18.%' IDENTIFIED BY '$2';GRANT all ON *.* TO 'root'@'172.18.%';FLUSH PRIVILEGES;"
     docker restart esc-mysql
 
@@ -239,7 +252,7 @@ function mysql_manager() {
 }
 function mysql_download() {
     docker pull mysql
-    docker save mysql >$(pwd)/mysql.tar
+    docker save mysql >$epiiDockerRooDir/mysql.tar
 }
 function help() {
      
