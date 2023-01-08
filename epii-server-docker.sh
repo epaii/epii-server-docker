@@ -200,10 +200,16 @@ function mysql_install() {
         echo "port $1 is be used"
         exit
     fi
+     if [ ! -d $3 ]; then
+        mkdir -p $3
+        chmod -R 0777 $3
+    fi
     data_dir=$(
         cd $3
         pwd
     )
+
+    echo "data dir:"$data_dir
 
     if [ ! -d $data_dir ]; then
         mkdir -p $data_dir
