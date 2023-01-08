@@ -224,7 +224,7 @@ function mysql_install() {
     docker run --restart=always -p $1:3306 --name esc-mysql -e MYSQL_ROOT_PASSWORD=$2 --network=epii-net --ip 172.18.12.100 -v $data_dir:/var/lib/mysql -d mysql --default-authentication-plugin=mysql_native_password
     sleep 20
     echo "run mysql contianer success"
-    docker exec -it esc-mysql mysql -e"USE mysql -uroot -p$2;alter user 'root'@'localhost'IDENTIFIED BY '$2';CREATE USER 'root'@'172.18.%' IDENTIFIED BY '$2';GRANT all ON *.* TO 'root'@'172.18.%';FLUSH PRIVILEGES;"
+    docker exec -it esc-mysql mysql  -uroot -p$2 -e"USE mysql;alter user 'root'@'localhost'IDENTIFIED BY '$2';CREATE USER 'root'@'172.18.%' IDENTIFIED BY '$2';GRANT all ON *.* TO 'root'@'172.18.%';FLUSH PRIVILEGES;"
     docker restart esc-mysql
 
 }
