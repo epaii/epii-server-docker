@@ -1,6 +1,8 @@
 #! /bin/bash
 
 version=latest
+ 
+
 
 if [[ $0 =~ ^\/.* ]]    #判断当前脚本是否为绝对路径，匹配以/开头下的所有
 then
@@ -247,6 +249,7 @@ function mysql_start() {
 
 function mysql_info() {
     docker inspect esc-mysql | grep IPAddress
+    echo "host:esc-mysql"
 }
 
 function mysql_bash() {
@@ -258,6 +261,26 @@ function mysql_manager() {
 function mysql_download() {
     docker pull mysql
     docker save mysql >$epiiDockerRooDir/mysql.tar
+}
+function phpmyadmin() {
+  if [  -d "./mysql" ]; then
+        rm -rf mysql
+  fi
+ 
+   curl -o phpmyadmin.tar.gz https://files.phpmyadmin.net/phpMyAdmin/5.2.1/phpMyAdmin-5.2.1-english.tar.gz
+   tar -xzvf phpmyadmin.tar.gz
+   mv phpMyAdmin-5.2.1-english mysql
+   cp mysql/config.sample.inc.php mysql/config.inc.php
+
+    if [ "$(uname)" == "Darwin" ]; then
+        sed -i "" 's/localhost/esc-mysql/g' mysql/config.inc.php
+    else
+        sed -i 's/localhost/esc-mysql/g' mysql/config.inc.php
+    fi
+
+   docker cp ./mysql esc-$version:/epii/webs
+
+   
 }
 function help() {
      
@@ -285,6 +308,8 @@ function help() {
     echo "sudo  epii-server-docker mysql bash"
     echo "sudo  epii-server-docker mysql manager"
     echo "sudo  epii-server-docker mysql download"
+    echo "sudo  epii-server-docker phpmyadmin"
+
 }
 
 if [ $(id -u) != "0" ]; then
@@ -296,8 +321,7 @@ fi
 command -v docker >/dev/null 2>&1 || {
     echo "docker is not installed.  Aborting."
     echo "you can install docker follow this:"
-    echo "curl -fsSL https://get.docker.com -o get-docker.sh"
-    echo "sudo /bin/bash get-docker.sh"
+    echo "sudo apt install docker.io"
     exit 1
 }
 
