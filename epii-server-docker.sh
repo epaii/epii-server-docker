@@ -269,6 +269,7 @@ function phpmyadmin() {
  
    curl -o phpmyadmin.tar.gz https://files.phpmyadmin.net/phpMyAdmin/5.2.1/phpMyAdmin-5.2.1-english.tar.gz
    tar -xzvf phpmyadmin.tar.gz
+   rm  -f phpmyadmin.tar.gz
    mv phpMyAdmin-5.2.1-english mysql
    cp mysql/config.sample.inc.php mysql/config.inc.php
 
