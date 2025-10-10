@@ -82,7 +82,7 @@ function install() {
         chmod -R 0777 $3/logs
     fi
     if [ -z "$(docker network ls | grep epii-net)" ]; then
-        docker network create --driver bridge --subnet=172.18.12.0/16 --gateway=172.18.1.1 epii-net
+        docker network create --driver bridge --subnet=172.18.0.0/16 --gateway=172.18.1.1 epii-net
     fi
     a_dir=$(
         cd $3
