@@ -131,6 +131,7 @@ function remove() {
 
 function start() {
     docker container ls | grep esc-${version} >/dev/null 2>&1 || { docker container start esc-${version}; }
+     docker exec esc-${version} bash -c 'cd /epii-server/bin ; /bin/bash ./epii-server.sh reinstall'
     docker exec esc-${version} bash -c 'cd /epii-server ; /bin/bash ./start.sh'
 }
 function stop() {
@@ -143,6 +144,11 @@ function restart() {
     stop
     start
 }
+function reload() {
+     docker exec esc-${version} bash -c 'cd /epii-server/bin ; /bin/bash ./epii-server.sh reinstall'
+     docker exec esc-${version} bash -c 'nginx -s reload'
+}
+
 function info() {
 
     cat $epiiDockerRooDir/.info
@@ -290,6 +296,7 @@ function help() {
     echo "sudo  epii-server-docker stop"
     echo "sudo  epii-server-docker start"
     echo "sudo  epii-server-docker restart"
+     echo "sudo  epii-server-docker reload"
     echo "sudo  epii-server-docker app list"
     echo "sudo  epii-server-docker app stop"
     echo "sudo  epii-server-docker app start"
