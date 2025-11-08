@@ -272,25 +272,10 @@ function mysql_download() {
     docker save mysql >$epiiDockerRooDir/mysql.tar
 }
 function phpmyadmin() {
-  if [  -d "./mysql" ]; then
-        rm -rf mysql
-  fi
- 
-   curl -o phpmyadmin.tar.gz https://files.phpmyadmin.net/phpMyAdmin/5.2.1/phpMyAdmin-5.2.1-english.tar.gz
-   tar -xzvf phpmyadmin.tar.gz
-   rm  -f phpmyadmin.tar.gz
-   mv phpMyAdmin-5.2.1-english mysql
-   cp mysql/config.sample.inc.php mysql/config.inc.php
-
-    if [ "$(uname)" == "Darwin" ]; then
-        sed -i "" 's/localhost/esc-mysql/g' mysql/config.inc.php
-    else
-        sed -i 's/localhost/esc-mysql/g' mysql/config.inc.php
-    fi
-
-   docker cp ./mysql esc-$version:/epii/webs
-
-   
+    docker exec esc-${version} bash -c " git -C /epii/webs clone https://gitee.com/epii/phpmyadmin.git mysql"
+    docker exec esc-${version} bash -c " cp /epii/webs/mysql/config.sample.inc.php /epii/webs/mysql/config.inc.php"
+    docker exec esc-${version} bash -c "  sed -i 's/localhost/esc-mysql/g' /epii/webs/mysql/config.inc.php"
+    
 }
 
 function installmanagerclient() {
@@ -301,7 +286,7 @@ function installmanagerclient() {
     docker exec esc-${version} bash -c " git -C /epii/webs clone https://gitee.com/epii/epii-server-web-manager.git web-manager"
     docker exec esc-${version} bash -c " cp /epii/webs/web-manager/config.example.php /epii/webs/web-manager/config.php"
     docker exec esc-${version} bash -c "  sed -i "" 's/epii.manager平台分配的秘钥/$1/g'  /epii/webs/web-manager/config.php"
-   
+    echo "http://yourdomain/app/mysql/index.php"
 }
 
 function help() {
