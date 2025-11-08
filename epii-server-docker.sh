@@ -225,12 +225,14 @@ function mysql_install() {
         chmod -R 0777 $data_dir
     fi
     file="./mysql.tar"
+    mysql_version="latest"
     if [ -f "$file" ]; then
         docker load <$file
     else
         docker pull mysql:8.0.25
+         mysql_version="8.0.25"
     fi
-    docker run --restart=always -p $1:3306 --name esc-mysql -e MYSQL_ROOT_PASSWORD=$2 --network=epii-net --ip 172.18.12.100 -v $data_dir:/var/lib/mysql -d mysql:8.0.25 --default-authentication-plugin=mysql_native_password
+    docker run --restart=always -p $1:3306 --name esc-mysql -e MYSQL_ROOT_PASSWORD=$2 --network=epii-net --ip 172.18.12.100 -v $data_dir:/var/lib/mysql -d mysql:$mysql_version --default-authentication-plugin=mysql_native_password
     sleep 20
     echo "run mysql contianer success"
     docker exec -it esc-mysql mysql  -uroot -p$2 -e"USE mysql;alter user 'root'@'localhost'IDENTIFIED BY '$2';CREATE USER 'root'@'172.18.%' IDENTIFIED BY '$2';GRANT all ON *.* TO 'root'@'172.18.%';FLUSH PRIVILEGES;"
