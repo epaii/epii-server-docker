@@ -4,7 +4,13 @@ mkdir epii-server-docker
 cd epii-server-docker
 curl -fsSL https://gitee.com/epii/epii-server-docker/raw/master/epii-server-docker.sh -o epii-server-docker.sh
 chmod +x  ./epii-server-docker.sh
+
+sudo apt install docker.io
+
 sudo ./epii-server-docker.sh install 80 443 /path/to/epii
+
+如果失败：通过 tar 文件
+
 ```
 
 

@@ -104,6 +104,7 @@ function install() {
     fi
 
     docker run --restart=always --network=epii-net --ip 172.18.12.99 --name esc-${version} -p $1:80 -p $2:443 -v $a_dir:/epii -itd epii-server:${version} /bin/bash -c "cd /epii-server ; /bin/bash ./start.sh;/bin/bash"
+    docker exec esc-${version} bash -c "git -C /epii-server remote set-url origin https://gitee.com/epii/epii-server.git"
     pull
     stop
     start
