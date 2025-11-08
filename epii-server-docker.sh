@@ -292,6 +292,18 @@ function phpmyadmin() {
 
    
 }
+
+function installmanagerclient() {
+    if [ $# != 1 ]; then
+        echo " it is need 1 args for key"
+        exit
+    fi
+    docker exec esc-${version} bash -c " git -C /epii/webs clone https://gitee.com/epii/epii-server-web-manager.git web-manager"
+    docker exec esc-${version} bash -c " cp /epii/webs/web-manager/config.example.php /epii/webs/web-manager/config.php"
+    docker exec esc-${version} bash -c "  sed -i "" 's/epii.manager平台分配的秘钥/$1/g'  /epii/webs/web-manager/config.php"
+   
+}
+
 function help() {
      
     echo "sudo ./epii-server-docker.sh install 80 443 /path/to/epii"
