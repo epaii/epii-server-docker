@@ -169,6 +169,14 @@ function git_add() {
     docker exec esc-${version} bash -c " php /webs/git-auto-website/bind.php /epii/repos/$1.git /epii/webs/$1"
 
 }
+function git_addapp() {
+    if [ $# != 1 ]; then
+        echo " it is need 2 args"
+        exit
+    fi
+    docker exec esc-${version} bash -c " php /webs/git-auto-website/bind.php /epii/repos/$1.git /epii/apps/$1"
+
+}
 
 function git() {
 
@@ -308,6 +316,7 @@ function help() {
     echo "sudo  epii-server-docker bash"
     echo "sudo  epii-server-docker git init"
     echo "sudo  epii-server-docker git add  {sitename}"
+    echo "sudo  epii-server-docker git addapp  {sitename}"
     echo "sudo  epii-server-docker mysql install 3306 rootpassword /path/to/data"
     echo "sudo  epii-server-docker mysql uninstall"
     echo "sudo  epii-server-docker mysql start"
